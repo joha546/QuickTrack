@@ -1,14 +1,23 @@
 const Task = require('../models/Task')
 
-exports.createTask = async(req, res) => {
-    try{
-        const task = await Task.create(req.body);
-        res.status(201).json(task);   
+exports.createTask = async (req, res) => {
+    try {
+      console.log("🔧 Incoming task data:", req.body);
+  
+      const { title, description, assignedTo, status } = req.body;
+  
+      if (!title || !description || !assignedTo || !status) {
+        return res.status(400).json({ error: "All fields are required" });
+      }
+  
+      const task = await Task.create({ title, description, assignedTo, status });
+      res.status(201).json(task);
+    } catch (error) {
+      console.error("❌ Error creating task:", error.message);
+      res.status(500).json({ error: error.message });
     }
-    catch(error){
-        res.status(500).json({ error: error.message });
-    }
-};
+  };
+  
 
 exports.getAllTasks = async(req, res) => {
     try{
